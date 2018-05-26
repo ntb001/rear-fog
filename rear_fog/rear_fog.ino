@@ -21,13 +21,13 @@ MCP_CAN CAN(SPI_CS_PIN);
 
 // CAN IDs
 const unsigned long HEADLIGHT_ID = 0xAF81110;
-const unsigned long DIMMER_ID    = 0x0; // TODO
+const unsigned long DIMMER_ID    = 0x12F85450;
 
 // state tracking
 bool rFogState      = false;
 bool switchActive   = false;
 bool headlightState = false;
-int dimmer          = 255;
+int dimmer          = 50;
 
 void setup() {
   // init IP indicator
@@ -60,7 +60,14 @@ void loop() {
       headlightState = (buf[0] & 0x02) != 0;
     }
     else if(canId == DIMMER_ID) {
-      // TODO
+      int ipDim = buf[0];
+      if(ipDim == 0xD6) { // max; dimmer disabled
+        dimmer = 50;
+      }
+      else {
+        // dimmer values from 0x41 to 0x55; map 1 to 10
+        dimmer = (ipDim - 0x3F) / 2;
+      }
     }
   }
 
