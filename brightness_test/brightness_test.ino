@@ -11,7 +11,8 @@ void setup() {
 void loop() {
   if(Serial.available()) {
     int dimmer = Serial.parseInt();
+    Serial.println(dimmer);
+    analogWrite(IP_LED, dimmer);
   }
-  Serial.println(dimmer);
-  analogWrite(IP_LED, dimmer);
+  
 }
