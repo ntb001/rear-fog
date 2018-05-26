@@ -35,6 +35,7 @@ void setup() {
 
   // init relay
   pinMode(RELAY, OUTPUT);
+  digitalWrite(RELAY, HIGH);
 
   // init switch
   pinMode(SWITCH, INPUT_PULLUP);
@@ -85,11 +86,11 @@ void loop() {
   // set output
   if(rFogState) {
     analogWrite(IP_LED, dimmer);
-    digitalWrite(RELAY, HIGH);
+    digitalWrite(RELAY, LOW);
   }
   else {
     analogWrite(IP_LED, 0);
-    digitalWrite(RELAY, LOW);
+    digitalWrite(RELAY, HIGH);
   }
 }
 
