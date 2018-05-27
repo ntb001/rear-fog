@@ -29,6 +29,10 @@ bool switchActive   = false;
 bool headlightState = false;
 int dimmer          = 11;
 
+// buffers
+unsigned char len;
+unsigned char buf[8];
+
 void setup() {
   // init IP indicator
   pinMode(IP_LED, OUTPUT);
@@ -51,15 +55,12 @@ void setup() {
 
 void loop() {
   // check CAN for message
-  unsigned char len = 0;
-  unsigned char buf[8];
   if(CAN_MSGAVAIL == CAN.checkReceive()) {
     if(CAN.readMsgBuf(&len, buf) == CAN_OK) {
-      unsigned long canId = CAN.getCanId();
-      if(canId == HEADLIGHT_ID) {
+      if(CAN.getCanId() == HEADLIGHT_ID) {
         headlightState = (buf[0] & 0x02) != 0;
       }
-      else if(canId == DIMMER_ID) {
+      else if(CAN.getCanId() == DIMMER_ID) {
         if(buf[0] == 0xD6) { // bright/daytime
           dimmer = 50;
         }
