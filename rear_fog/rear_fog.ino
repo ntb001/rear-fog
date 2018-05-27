@@ -54,19 +54,20 @@ void loop() {
   unsigned char len = 0;
   unsigned char buf[8];
   if(CAN_MSGAVAIL == CAN.checkReceive()) {
-    CAN.readMsgBuf(&len, buf);
-    unsigned long canId = CAN.getCanId();
-    if(canId == HEADLIGHT_ID) {
-      headlightState = (buf[0] & 0x02) != 0;
-    }
-    else if(canId == DIMMER_ID) {
-      int ipDim = buf[0];
-      if(ipDim == 0xD6) { // max; dimmer disabled
-        dimmer = 50;
+    if(CAN.readMsgBuf(&len, buf) == CAN_OK) {
+      unsigned long canId = CAN.getCanId();
+      if(canId == HEADLIGHT_ID) {
+        headlightState = (buf[0] & 0x02) != 0;
       }
-      else {
-        // dimmer values from 0x41 to 0x55; map 1 to 10
-        dimmer = (ipDim - 0x3F) / 2;
+      else if(canId == DIMMER_ID) {
+        int ipDim = buf[0];
+        if(ipDim == 0xD6) { // max; dimmer disabled
+          dimmer = 50;
+        }
+        else {
+          // dimmer values from 0x41 to 0x55; map 1 to 10
+          dimmer = (ipDim - 0x3F) / 2;
+        }
       }
     }
   }
