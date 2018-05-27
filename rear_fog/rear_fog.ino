@@ -81,9 +81,7 @@ void loop() {
     }
   }
   else { // switch is off
-    if(switchActive == true) {
-      switchActive = false;
-    }
+    switchActive = false;
   }
 
   // turn off with headlights; overrides switch input
