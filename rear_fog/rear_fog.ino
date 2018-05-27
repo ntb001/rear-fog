@@ -15,8 +15,8 @@ const int RELAY = 7;
 const int SWITCH = 4;
 Bounce bSwitch = Bounce();
 
-// CAN bus shield: cs pin is D9
-const int SPI_CS_PIN = 9;
+// CAN bus shield
+const int SPI_CS_PIN = 9; // CS pin is D9
 MCP_CAN CAN(SPI_CS_PIN);
 
 // CAN IDs
@@ -42,13 +42,12 @@ void setup() {
   digitalWrite(RELAY, HIGH);
 
   // init switch
-  pinMode(SWITCH, INPUT_PULLUP);
+  pinMode(SWITCH, INPUT_PULLUP); // switch shorts to ground
   bSwitch.attach(SWITCH);
   bSwitch.interval(5);
 
   // init CAN bus
-  // B-CAN runs at 125kbps
-  while(CAN_OK != CAN.begin(CAN_125KBPS)) {
+  while(CAN_OK != CAN.begin(CAN_125KBPS)) { // B-CAN runs at 125kbps
     delay(100);
   }
 }
@@ -61,7 +60,7 @@ void loop() {
         headlightState = (buf[0] & 0x02) != 0;
       }
       else if(CAN.getCanId() == DIMMER_ID) {
-        if(buf[0] == 0xD6) { // bright/daytime
+        if(buf[0] == 0xD6) { // max-daytime
           dimmer = 50;
         }
         else { // nighttime
@@ -78,7 +77,7 @@ void loop() {
   if(bSwitch.read() == LOW) { // switch is on
     if(switchActive == false) {
       switchActive = true;
-      rFogState = !rFogState;
+      rFogState = !rFogState; // toggle state
     }
   }
   else { // switch is off
@@ -91,11 +90,10 @@ void loop() {
   // set output
   if(rFogState) {
     analogWrite(IP_LED, dimmer);
-    digitalWrite(RELAY, LOW);
+    digitalWrite(RELAY, LOW); // relay is low trigger
   }
   else {
     analogWrite(IP_LED, 0);
     digitalWrite(RELAY, HIGH);
   }
 }
-
