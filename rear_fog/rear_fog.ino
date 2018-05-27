@@ -84,10 +84,8 @@ void loop() {
     switchActive = false;
   }
 
-  // turn off with headlights; overrides switch input
-  if(headlightState == false) {
-    rFogState = false;
-  }
+  // turn off with headlights
+  rFogState = rFogState && headlightState; // overrides switch input
 
   // set output
   if(rFogState) {
