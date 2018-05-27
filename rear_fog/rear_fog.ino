@@ -27,7 +27,7 @@ const unsigned long DIMMER_ID    = 0x12F85450;
 bool rFogState      = false;
 bool switchActive   = false;
 bool headlightState = false;
-int dimmer          = 50;
+int dimmer          = 11;
 
 void setup() {
   // init IP indicator
@@ -60,13 +60,13 @@ void loop() {
         headlightState = (buf[0] & 0x02) != 0;
       }
       else if(canId == DIMMER_ID) {
-        int ipDim = buf[0];
-        if(ipDim == 0xD6) { // max; dimmer disabled
+        if(buf[0] == 0xD6) { // bright/daytime
           dimmer = 50;
         }
-        else {
-          // dimmer values from 0x41 to 0x55; map 1 to 10
-          dimmer = (ipDim - 0x3F) / 2;
+        else { // nighttime
+          // ipDim values 0x41-0x55
+          // map to 1-11
+          dimmer = (buf[0] - 0x3F) / 2;
         }
       }
     }
