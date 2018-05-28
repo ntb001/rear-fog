@@ -88,12 +88,6 @@ void loop() {
   rFogState = rFogState && headlightState; // overrides switch input
 
   // set output
-  if(rFogState) {
-    analogWrite(IP_LED, dimmer);
-    digitalWrite(RELAY, LOW); // relay is low trigger
-  }
-  else {
-    analogWrite(IP_LED, 0);
-    digitalWrite(RELAY, HIGH);
-  }
+  analogWrite(IP_LED, dimmer * rFogState);
+  digitalWrite(RELAY, !rFogState); // relay is low trigger
 }
