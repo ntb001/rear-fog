@@ -54,7 +54,7 @@ void setup() {
 
 void loop() {
   // check CAN for message
-  if(CAN_MSGAVAIL == CAN.checkReceive()) {
+  if(CAN.checkReceive() == CAN_MSGAVAIL) {
     if(CAN.readMsgBuf(&len, buf) == CAN_OK) {
       if(CAN.getCanId() == HEADLIGHT_ID) {
         headlightState = (buf[0] & 0x02) != 0;
