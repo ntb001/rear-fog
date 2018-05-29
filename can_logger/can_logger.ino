@@ -6,10 +6,10 @@ const int SPI_CS_PIN = 9;
 MCP_CAN CAN(SPI_CS_PIN);
 
 void setup() {
+  // fast serial
   Serial.begin(115200);
-
   // B-CAN runs at 125kbps
-  while(CAN_OK != CAN.begin(CAN_125KBPS)) {
+  while(CAN.begin(CAN_125KBPS) != CAN_OK) {
     Serial.println("CAN BUS Shield init fail");
     Serial.println("  Init CAN BUS Shield again");
     delay(100);
@@ -17,23 +17,23 @@ void setup() {
   Serial.println("CAN BUS Shield init OK!");
 }
 
-void loop() {
-  unsigned char len = 0;
-  unsigned char buf[8];
+// buffers
+byte len;
+byte buf[8];
 
-  // check if data coming
-  if(CAN_MSGAVAIL == CAN.checkReceive()){
-    CAN.readMsgBuf(&len, buf);
-    unsigned long canId = CAN.getCanId();
-    Serial.print(millis());
-    Serial.print("\t");
-    Serial.print(canId, HEX);
-    Serial.print("\t");
-    for(int i = 0; i < len; ++i) {
-      if(buf[i] < 0x10) Serial.print("0");
-      Serial.print(buf[i], HEX);
-      Serial.print(" ");
+void loop() {
+  if(CAN.checkReceive() == CAN_MSGAVAIL) {
+    if(CAN.readMsgBuf(&len, buf) == CAN_OK) {
+      Serial.print(millis());
+      Serial.print("\t");
+      Serial.print(CAN.getCanId(), HEX);
+      Serial.print("\t");
+      for(int i = 0; i < len; ++i) {
+        if(buf[i] < 0x10) Serial.print("0"); // pad 0x00-0x0F
+        Serial.print(buf[i], HEX);
+        Serial.print(" ");
+      }
+      Serial.println();
     }
-    Serial.println();
   }
 }
